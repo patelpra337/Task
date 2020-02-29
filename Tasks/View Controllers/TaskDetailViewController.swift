@@ -9,6 +9,8 @@
 import UIKit
 
 class TaskDetailViewController: UIViewController {
+    
+    var taskController = TaskController!
 
     @IBOutlet var nameTextField: UITextField!
     @IBOutlet var notesTextView: UITextView!

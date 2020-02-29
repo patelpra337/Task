@@ -10,6 +10,9 @@ import UIKit
 import CoreData
 
 class TasksTableViewController: UITableViewController {
+
+    
+    private let taskController = TaskController()
     
     // WARNING! This is incredibly inefficient!!!
 //    var tasks: [Task] {
@@ -82,6 +85,17 @@ class TasksTableViewController: UITableViewController {
             let moc = CoreDataStack.shared.mainContext
             moc.delete(task)
             
+            taskController.deleteTaskFromServer(task) { (error) in
+                guard error == nil else {
+                    print("Error deleting task from server: \(error!)")
+                    return
+                }
+                
+                let moc = CoreDataStack.shared.mainContext
+                moc.delete()
+                
+            }
+            
             do {
                 try moc.save()
             } catch {
@@ -97,6 +111,10 @@ class TasksTableViewController: UITableViewController {
             guard let detailVC = segue.destination as? TaskDetailViewController else { return }
             guard let indexPath = tableView.indexPathForSelectedRow else { return }
             detailVC.task = fetchedResultsController.object(at: indexPath)
+        }
+        
+        if let detailVC = segue.destination as? TaskDetailViewController {
+            detailVC.taskController = taskController
         }
     }
 }
